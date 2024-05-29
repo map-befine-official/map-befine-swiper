@@ -1,9 +1,9 @@
 {
   "name": "map-befine-swiper",
   "private": false,
-  "version": "0.8.3",
+  "version": "0.9.0",
   "license": "MIT",
-  "description": "woowacourse mission Tab Layout 컴포넌트에서 Swiper로 변경된 것입니다.",
+  "description": "https://mapbefine.com에서 사용하는 Swiper 라이브러리 입니다.",
   "type": "module",
   "main": "dist/index.umd.cjs",
   "module": "dist/index.js",
