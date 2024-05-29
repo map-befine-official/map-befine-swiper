@@ -19,14 +19,10 @@ interface Props {
   height?: number;
   $tabBoxHeight?: number;
   $tabColor?: string | string[];
+  $focusColor?: string;
   $tabBoxPosition?: TabBoxPositionType;
   $elementsOneTab?: number;
-  $focusColor?: string;
-  $simpleTab?: boolean;
-  $isNotTabBoxShow?: boolean;
-  responsive?: boolean;
-  swiper?: boolean;
-  swipeable?: boolean;
+  $showTabBox?: boolean;
   autoplay?: boolean;
   $autoplayTime?: number;
   $autoplayButton?: boolean;
@@ -42,7 +38,7 @@ const getTabsColor = (indexOfTab: number, $tabColor: string | string[]) => {
 
 const calculateTabCountUsingElements = (
   childrenList: React.ReactElement<TabProps>[],
-  $elementsOneTab: number,
+  $elementsOneTab: number
 ) => {
   if ($elementsOneTab > 1) {
     const tabBoxesCount = Math.ceil(childrenList.length / $elementsOneTab);
@@ -52,19 +48,27 @@ const calculateTabCountUsingElements = (
   return childrenList;
 };
 
+const calculateWidthUsingElementsCount = (
+  width: number | '100vw',
+  elementCount: number
+) => {
+  if (typeof width === 'number' && elementCount > 1)
+    return width / elementCount;
+  if (typeof width === 'string' && elementCount > 1)
+    return `calc(${width} / ${elementCount})`;
+
+  return width;
+};
+
 function Swiper({
   width = 400,
   height = 400,
-  $simpleTab = false,
-  $isNotTabBoxShow = false,
+  $showTabBox = false,
   $tabBoxHeight = height / 10,
   $tabBoxPosition = 'top',
   $elementsOneTab = 1,
   $tabColor = '#e4e4e4',
   $focusColor = '#316fc4',
-  responsive = true,
-  swiper = false,
-  swipeable = false,
   autoplay = false,
   $autoplayTime = 5000,
   $autoplayButton = false,
@@ -73,15 +77,14 @@ function Swiper({
   children,
 }: Props) {
   const childrenList = React.Children.toArray(
-    children,
+    children
   ) as React.ReactElement<TabProps>[];
-  const isShowTabBox =
-    !$isNotTabBoxShow && childrenList.length > $elementsOneTab;
+  const isShowTabBox = $showTabBox && childrenList.length > $elementsOneTab;
 
   const [pos, setPos] = useState<number>(0);
   const { elementsCount } = useMediaQuery(
     $elementsMediaQueries,
-    $elementsOneTab,
+    $elementsOneTab
   );
   const {
     increasePos,
@@ -92,7 +95,7 @@ function Swiper({
   } = useSwipeable({
     childrenListLength: calculateTabCountUsingElements(
       childrenList,
-      elementsCount,
+      elementsCount
     ).length,
     pos,
     setPos,
@@ -102,21 +105,16 @@ function Swiper({
     $autoplayTime,
     childrenListLength: calculateTabCountUsingElements(
       childrenList,
-      elementsCount,
+      elementsCount
     ).length,
     pos,
     setPos,
   });
 
   return (
-    <Wrapper
-      as={as}
-      width={width}
-      responsive={responsive}
-      $tabBoxPosition={$tabBoxPosition}
-    >
+    <Wrapper as={as} width={width} $tabBoxPosition={$tabBoxPosition}>
       {isShowTabBox && (
-        <TabBoxWrapper $simpleTab={$simpleTab} $tabBoxHeight={$tabBoxHeight}>
+        <TabBoxWrapper $showTabBox={$showTabBox} $tabBoxHeight={$tabBoxHeight}>
           {calculateTabCountUsingElements(childrenList, elementsCount).map(
             (children, idx) =>
               children && (
@@ -129,51 +127,48 @@ function Swiper({
                   width={width}
                   $tabBoxHeight={$tabBoxHeight}
                   $childrenLength={Math.ceil(
-                    childrenList.length / $elementsOneTab,
+                    childrenList.length / $elementsOneTab
                   )}
-                  $simpleTab={$simpleTab}
+                  $showTabBox={$showTabBox}
                   onClick={() => moveToSettedPos(idx)}
                 >
-                  {!$simpleTab && (children.props.label || idx + 1)}
+                  {$showTabBox && (children.props.label || idx + 1)}
                 </TabBox>
-              ),
+              )
           )}
         </TabBoxWrapper>
       )}
 
       <TabSectionWrapper
-        {...(swipeable && {
-          onTouchMove: handleTouchMove,
-          onTouchEnd: handleTouchEnd,
-        })}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         width={width}
         height={height}
         $childrenLength={childrenList.length}
         pos={pos}
-        responsive={responsive}
         $elementsOneTab={elementsCount}
       >
         {children}
       </TabSectionWrapper>
 
-      {swiper && (
-        <>
-          <SwiperButtonLeftWrapper
-            $tabBoxHeight={$tabBoxHeight}
-            $isNotTabBoxShow={$isNotTabBoxShow}
-            onClick={decreasePos}
-          >
-            <SwiperLeftBtnSVG />
-          </SwiperButtonLeftWrapper>
-          <SwiperButtonRightWrapper
-            $tabBoxHeight={$tabBoxHeight}
-            $isNotTabBoxShow={$isNotTabBoxShow}
-            onClick={increasePos}
-          >
-            <SwiperRightBtnSVG />
-          </SwiperButtonRightWrapper>
-        </>
-      )}
+      <>
+        <SwiperButtonWrapper
+          $tabBoxHeight={$tabBoxHeight}
+          $showTabBox={$showTabBox}
+          position="left"
+          onClick={decreasePos}
+        >
+          <SwiperLeftBtnSVG />
+        </SwiperButtonWrapper>
+        <SwiperButtonWrapper
+          $tabBoxHeight={$tabBoxHeight}
+          $showTabBox={$showTabBox}
+          position="right"
+          onClick={increasePos}
+        >
+          <SwiperRightBtnSVG />
+        </SwiperButtonWrapper>
+      </>
 
       {$autoplayButton && childrenList.length > 1 && (
         <AutoplayButtonWrapper>
@@ -188,11 +183,7 @@ function Swiper({
   );
 }
 
-const Wrapper = styled.div<{
-  width: number;
-  responsive: boolean;
-  $tabBoxPosition: TabBoxPositionType;
-}>`
+const Wrapper = styled.div<Partial<Props>>`
   width: ${({ width }) => `${width}px`};
   overflow: hidden;
   margin: 0 auto;
@@ -201,34 +192,18 @@ const Wrapper = styled.div<{
   flex-direction: ${({ $tabBoxPosition }) =>
     $tabBoxPosition === 'top' ? 'column' : 'column-reverse'};
 
-  // responsive가 true 이면 입력 받은 width 값 보다 뷰포트가 작아질 때 뷰포트에 맞게 width를 설정합니다.
-  ${({ responsive, width }) =>
-    responsive &&
-    css`
-      @media (max-width: ${width}px) {
-        width: 100%;
-      }
-    `}
+  ${({ width }) => css`
+    @media (max-width: ${width}px) {
+      width: 100%;
+    }
+  `}
 `;
-
-const calculateWidthUsingElementsCount = (
-  width: number | '100vw',
-  elementCount: number,
-) => {
-  if (typeof width === 'number' && elementCount > 1)
-    return width / elementCount;
-  if (typeof width === 'string' && elementCount > 1)
-    return `calc(${width} / ${elementCount})`;
-
-  return width;
-};
 
 const TabSectionWrapper = styled.div<{
   width: number;
   height: number;
   $childrenLength: number;
   pos: number;
-  responsive: boolean;
   $elementsOneTab: number;
 }>`
   display: flex;
@@ -241,33 +216,29 @@ const TabSectionWrapper = styled.div<{
   transform: ${({ width, pos }) => `translateX(${-width * pos}px)`};
   transition: 0.3s ease transform;
 
-  ${({ responsive, width, $childrenLength, pos }) =>
-    responsive &&
-    css`
-      @media (max-width: ${width}px) {
-        width: calc(100vw * ${$childrenLength});
-        height: auto;
-        transform: translateX(calc(-100vw * ${pos}));
-      }
-    `}
+  ${({ width, $childrenLength, pos }) => css`
+    @media (max-width: ${width}px) {
+      width: calc(100vw * ${$childrenLength});
+      height: auto;
+      transform: translateX(calc(-100vw * ${pos}));
+    }
+  `}
 
   // <Tabs /> 컴포넌트에 입력한 width와 <Tab /> 컴포넌트 width를 동일하게 합니다.
   & > * {
     width: ${({ width, $elementsOneTab }) =>
       calculateWidthUsingElementsCount(width, $elementsOneTab)}px;
 
-    ${({ responsive, width, $elementsOneTab }) =>
-      responsive &&
-      css`
-        @media (max-width: ${width}px) {
-          width: ${calculateWidthUsingElementsCount('100vw', $elementsOneTab)};
-        }
-      `}
+    ${({ width, $elementsOneTab }) => css`
+      @media (max-width: ${width}px) {
+        width: ${calculateWidthUsingElementsCount('100vw', $elementsOneTab)};
+      }
+    `}
   }
 `;
 
 const TabBoxWrapper = styled.div<{
-  $simpleTab: boolean;
+  $showTabBox: boolean;
   $tabBoxHeight: number;
 }>`
   display: flex;
@@ -278,8 +249,8 @@ const TabBoxWrapper = styled.div<{
   overflow: auto;
 
   // simpleTab 모드에서는 TabButton이 작아지므로 가운데 정렬하도록 합니다.
-  ${({ $simpleTab }) =>
-    $simpleTab &&
+  ${({ $showTabBox }) =>
+    !$showTabBox &&
     css`
       justify-content: center;
     `}
@@ -291,7 +262,7 @@ const TabBox = styled.button<{
   pos: number;
   $tabBoxHeight: number;
   $childrenLength: number;
-  $simpleTab: boolean;
+  $showTabBox: boolean;
   $tabColor: string;
   $focusColor: string;
 }>`
@@ -302,9 +273,8 @@ const TabBox = styled.button<{
   cursor: pointer;
   background-color: ${({ $tabColor }) => $tabColor};
 
-  // simpleTab 모드일 때 탭 박스 대신 원이 생성됩니다. 해당 원의 크기를 지정합니다.
-  ${({ $simpleTab, $tabBoxHeight }) =>
-    $simpleTab &&
+  ${({ $showTabBox, $tabBoxHeight }) =>
+    !$showTabBox &&
     css`
       padding: 0;
       width: ${$tabBoxHeight / 2}px;
@@ -312,9 +282,8 @@ const TabBox = styled.button<{
       border-radius: 50%;
     `}
 
-  // simpleTab 모드에서 원들이 가운데 정렬되므로 각 요소의 margin을 설정합니다.
-  ${({ $simpleTab }) =>
-    $simpleTab &&
+  ${({ $showTabBox }) =>
+    !$showTabBox &&
     css`
       margin-right: 12px;
 
@@ -323,55 +292,43 @@ const TabBox = styled.button<{
       }
     `}
 
-    // simpleTab 모드가 아닐때, 포커스 된 탭 박스 하단 밑줄 구현부입니다.
     ${({ idx, pos, $focusColor }) =>
     idx === pos &&
     css`
       border-bottom: 2px solid ${$focusColor};
     `}
 
-    // simpleTab 모드 일 때, 포커스 된 원 배경색 구현부입니다.
-    ${({ $simpleTab, idx, pos, $focusColor }) =>
+    ${({ $showTabBox, idx, pos, $focusColor }) =>
     idx === pos &&
-    $simpleTab &&
+    !$showTabBox &&
     css`
       border-bottom: 0;
       border: 2px solid ${$focusColor};
     `}
 `;
 
-const SwiperButtonLeftWrapper = styled.div<{
+const SwiperButtonWrapper = styled.div<{
   $tabBoxHeight: number;
-  $isNotTabBoxShow: boolean;
+  $showTabBox: boolean;
+  position: 'left' | 'right';
 }>`
   cursor: pointer;
   position: absolute;
-  top: ${({ $tabBoxHeight, $isNotTabBoxShow }) =>
-    $isNotTabBoxShow ? `50%` : `calc(50% + ${$tabBoxHeight}px / 2)`};
-  left: 1%;
-  transform: ${({ $tabBoxHeight, $isNotTabBoxShow }) =>
-    $isNotTabBoxShow
-      ? `translateY(-50%)`
-      : `translateY(calc(-50% - ${$tabBoxHeight}px))`};
+  top: ${({ $tabBoxHeight, $showTabBox }) =>
+    $showTabBox ? `calc(50% + ${$tabBoxHeight}px / 2)` : `50%`};
+  transform: ${({ $tabBoxHeight, $showTabBox }) =>
+    $showTabBox
+      ? `translateY(calc(-50% - ${$tabBoxHeight}px))`
+      : `translateY(-50%)`};
 
-  @media (max-width: 744px) {
-    display: none;
-  }
-`;
-
-const SwiperButtonRightWrapper = styled.div<{
-  $tabBoxHeight: number;
-  $isNotTabBoxShow: boolean;
-}>`
-  cursor: pointer;
-  position: absolute;
-  top: ${({ $tabBoxHeight, $isNotTabBoxShow }) =>
-    $isNotTabBoxShow ? `50%` : `calc(50% + ${$tabBoxHeight}px / 2)`};
-  right: 1%;
-  transform: ${({ $tabBoxHeight, $isNotTabBoxShow }) =>
-    $isNotTabBoxShow
-      ? `translateY(-50%)`
-      : `translateY(calc(-50% - ${$tabBoxHeight}px))`};
+  ${({ position }) =>
+    position === 'left'
+      ? css`
+          left: 1%;
+        `
+      : css`
+          right: 1%;
+        `};
 
   @media (max-width: 744px) {
     display: none;
