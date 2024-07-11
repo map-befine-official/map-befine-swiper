@@ -1,4 +1,4 @@
-import { StoryObj, Meta } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import Tabs from '../lib/Swiper';
 import Tab from '../lib/Tab';
 
@@ -31,20 +31,16 @@ const meta = {
       description:
         'Tab Index Box 의 위치를 지정합니다. 위, 아래로만 지정할 수 있습니다.',
     },
-    $isNotTabBoxShow: {
-      control: 'boolean',
-      description: 'Tab Index Box 표시 여부를 지정합니다.',
-    },
     $focusColor: {
       control: { type: 'color', preset: '#316fc4' },
       description:
         'Tab Index Box 가 포커스 되었을 때 색상을 지정합니다. 기본값은 #316fc4 입니다.',
     },
-    $simpleTab: {
+    $showTabBox: {
       control: 'boolean',
-      description: 'Tab index box 를 간단하게 표현할 지 설정합니다.',
+      description: 'Tab Box를 표시할 지 설정합니다.',
     },
-    $elementsOneTab: {
+    $slidePerTab: {
       control: 'number',
       description: '하나의 Tab Index Box에서 표시할 Tab의 갯수를 지정합니다.',
     },
@@ -54,18 +50,6 @@ const meta = {
       description:
         '미디어 쿼리 max-width 값을 number 타입 배열로 설정합니다. 이 속성을 쓰려면 $elementsOneTab을 지정해야합니다. 값을 하나 설정할 때마다 $elementsOneTab에서 -1 됩니다.',
     },
-    responsive: {
-      control: 'boolean',
-      description: '반응형에 대응할 여부를 설정합니다.',
-    },
-    swiper: {
-      control: 'boolean',
-      description: '좌, 우로 넘길 수 있는 화살표 버튼을 표시할 지 설정합니다.',
-    },
-    swipeable: {
-      control: 'boolean',
-      description: '모바일 환경에서 좌, 우 스와이프 가능 여부를 설정합니다.',
-    },
     autoplay: {
       control: 'boolean',
       description:
@@ -74,10 +58,6 @@ const meta = {
     $autoplayTime: {
       control: 'number',
       description: 'autoplay 딜레이 시간을 지정합니다. ms 단위입니다.',
-    },
-    $autoplayButton: {
-      control: 'boolean',
-      description: 'autoplay 정지 및 시작 버튼 표시 여부를 지정합니다.',
     },
   },
 } as Meta<typeof Tabs>;
@@ -110,7 +90,6 @@ export const SimpleTab: Story = {
     width: 1000,
     height: 400,
     $tabBoxHeight: 40,
-    $simpleTab: true,
   },
   render: (args) => (
     <Tabs {...args}>
@@ -152,7 +131,6 @@ export const Swiper: Story = {
     width: 1000,
     height: 400,
     $tabBoxHeight: 40,
-    swiper: true,
   },
   render: (args) => (
     <Tabs {...args}>
@@ -195,7 +173,7 @@ export const ThreeElementsInOnTab: Story = {
     width: 1000,
     height: 400,
     $tabBoxHeight: 40,
-    $elementsOneTab: 3,
+    $slidePerTab: 3,
   },
   render: (args) => (
     <Tabs {...args}>
@@ -213,7 +191,7 @@ export const MediaQueries: Story = {
     width: 1000,
     height: 400,
     $tabBoxHeight: 40,
-    $elementsOneTab: 4,
+    $slidePerTab: 4,
     $elementsMediaQueries: [1200, 600],
   },
   render: (args) => (

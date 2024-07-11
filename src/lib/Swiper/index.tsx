@@ -1,64 +1,17 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 
+import { Props, TabProps } from '../../types/inex';
+import {
+  calculateTabCountUsingElements,
+  calculateWidthUsingElementsCount,
+  getTabsColor,
+} from '../../utils';
 import SwiperLeftBtnSVG from '../assets/swiper_left_button.svg?react';
 import SwiperRightBtnSVG from '../assets/swiper_right_button.svg?react';
 import useAutoplay from '../hooks/useAutoplay';
-import useMediaQuery from '../hooks/useMatchMedia';
+import useMediaQuery from '../hooks/useMediaQuery';
 import useSwipeable from '../hooks/useSwipeable';
-
-type TabBoxPositionType = 'top' | 'bottom';
-
-interface TabProps {
-  label: string;
-}
-
-interface Props {
-  children: React.ReactNode;
-  width?: number;
-  height?: number;
-  $tabBoxHeight?: number;
-  $tabColor?: string | string[];
-  $focusColor?: string;
-  $tabBoxPosition?: TabBoxPositionType;
-  $elementsOneTab?: number;
-  $showTabBox?: boolean;
-  autoplay?: boolean;
-  $autoplayTime?: number;
-  $autoplayButton?: boolean;
-  $elementsMediaQueries?: number[];
-  as?: string;
-}
-
-const getTabsColor = (indexOfTab: number, $tabColor: string | string[]) => {
-  if (typeof $tabColor === 'string') return $tabColor;
-
-  return $tabColor[indexOfTab] || '#e4e4e4';
-};
-
-const calculateTabCountUsingElements = (
-  childrenList: React.ReactElement<TabProps>[],
-  $elementsOneTab: number
-) => {
-  if ($elementsOneTab > 1) {
-    const tabBoxesCount = Math.ceil(childrenList.length / $elementsOneTab);
-    return childrenList.filter((_, idx) => idx < tabBoxesCount);
-  }
-
-  return childrenList;
-};
-
-const calculateWidthUsingElementsCount = (
-  width: number | '100vw',
-  elementCount: number
-) => {
-  if (typeof width === 'number' && elementCount > 1)
-    return width / elementCount;
-  if (typeof width === 'string' && elementCount > 1)
-    return `calc(${width} / ${elementCount})`;
-
-  return width;
-};
 
 function Swiper({
   width = 400,
@@ -66,12 +19,11 @@ function Swiper({
   $showTabBox = false,
   $tabBoxHeight = height / 10,
   $tabBoxPosition = 'top',
-  $elementsOneTab = 1,
+  $slidePerTab = 1,
   $tabColor = '#e4e4e4',
   $focusColor = '#316fc4',
   autoplay = false,
   $autoplayTime = 5000,
-  $autoplayButton = false,
   $elementsMediaQueries = [],
   as = 'div',
   children,
@@ -79,13 +31,10 @@ function Swiper({
   const childrenList = React.Children.toArray(
     children
   ) as React.ReactElement<TabProps>[];
-  const isShowTabBox = $showTabBox && childrenList.length > $elementsOneTab;
+  const isShowTabBox = $showTabBox && childrenList.length > $slidePerTab;
 
   const [pos, setPos] = useState<number>(0);
-  const { elementsCount } = useMediaQuery(
-    $elementsMediaQueries,
-    $elementsOneTab
-  );
+  const { elementsCount } = useMediaQuery($elementsMediaQueries, $slidePerTab);
   const {
     increasePos,
     decreasePos,
@@ -100,7 +49,7 @@ function Swiper({
     pos,
     setPos,
   });
-  const { isPlaying, toggleAutoplay } = useAutoplay({
+  useAutoplay({
     autoplay,
     $autoplayTime,
     childrenListLength: calculateTabCountUsingElements(
@@ -127,7 +76,7 @@ function Swiper({
                   width={width}
                   $tabBoxHeight={$tabBoxHeight}
                   $childrenLength={Math.ceil(
-                    childrenList.length / $elementsOneTab
+                    childrenList.length / $slidePerTab
                   )}
                   $showTabBox={$showTabBox}
                   onClick={() => moveToSettedPos(idx)}
@@ -146,7 +95,7 @@ function Swiper({
         height={height}
         $childrenLength={childrenList.length}
         pos={pos}
-        $elementsOneTab={elementsCount}
+        $slidePerView={elementsCount}
       >
         {children}
       </TabSectionWrapper>
@@ -169,16 +118,6 @@ function Swiper({
           <SwiperRightBtnSVG />
         </SwiperButtonWrapper>
       </>
-
-      {$autoplayButton && childrenList.length > 1 && (
-        <AutoplayButtonWrapper>
-          {isPlaying ? (
-            <AutoplayButton onClick={toggleAutoplay}>||</AutoplayButton>
-          ) : (
-            <AutoplayButton onClick={toggleAutoplay}>▶️</AutoplayButton>
-          )}
-        </AutoplayButtonWrapper>
-      )}
     </Wrapper>
   );
 }
@@ -204,7 +143,7 @@ const TabSectionWrapper = styled.div<{
   height: number;
   $childrenLength: number;
   pos: number;
-  $elementsOneTab: number;
+  $slidePerView: number;
 }>`
   display: flex;
 
@@ -219,19 +158,18 @@ const TabSectionWrapper = styled.div<{
   ${({ width, $childrenLength, pos }) => css`
     @media (max-width: ${width}px) {
       width: calc(100vw * ${$childrenLength});
-      height: auto;
       transform: translateX(calc(-100vw * ${pos}));
     }
   `}
 
   // <Tabs /> 컴포넌트에 입력한 width와 <Tab /> 컴포넌트 width를 동일하게 합니다.
   & > * {
-    width: ${({ width, $elementsOneTab }) =>
-      calculateWidthUsingElementsCount(width, $elementsOneTab)}px;
+    width: ${({ width, $slidePerView }) =>
+      calculateWidthUsingElementsCount(width, $slidePerView)}px;
 
-    ${({ width, $elementsOneTab }) => css`
+    ${({ width, $slidePerView }) => css`
       @media (max-width: ${width}px) {
-        width: ${calculateWidthUsingElementsCount('100vw', $elementsOneTab)};
+        width: ${calculateWidthUsingElementsCount('100vw', $slidePerView)};
       }
     `}
   }
@@ -333,26 +271,6 @@ const SwiperButtonWrapper = styled.div<{
   @media (max-width: 744px) {
     display: none;
   }
-`;
-
-const AutoplayButtonWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  position: absolute;
-  bottom: 12%;
-`;
-
-const AutoplayButton = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: transparent;
-  color: rgba(149, 149, 149, 0.8);
-  border: 1px solid rgba(149, 149, 149, 0.8);
-  width: 64px;
-  height: 32px;
-  cursor: pointer;
 `;
 
 export default Swiper;
