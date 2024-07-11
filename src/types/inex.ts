@@ -9,7 +9,7 @@ export interface Props {
   width?: number;
   height?: number;
   $tabBoxHeight?: number;
-  $tabColor?: string | string[];
+  $tabBoxColor?: string | string[];
   $focusColor?: string;
   $tabBoxPosition?: TabBoxPositionType;
   $slidePerTab?: number;

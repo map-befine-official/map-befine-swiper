@@ -13,7 +13,7 @@ import {
   getTabsColor,
 } from '../utils';
 
-function Swiper({
+export default function Swiper({
   width = 400,
   height = 400,
   $showTabBox = false,
@@ -21,7 +21,7 @@ function Swiper({
   $tabBoxPosition = 'top',
   $slidePerTab = 1,
   $breakPoints = {},
-  $tabColor = '#e4e4e4',
+  $tabBoxColor = '#e4e4e4',
   $focusColor = '#316fc4',
   autoplay = false,
   $autoplayTime = 5000,
@@ -75,7 +75,7 @@ function Swiper({
                   key={`${children.props.label}, ${idx + 1}`}
                   idx={idx}
                   pos={pos}
-                  $tabColor={getTabsColor(idx, $tabColor)}
+                  $tabBoxColor={getTabsColor(idx, $tabBoxColor)}
                   $focusColor={$focusColor}
                   width={width}
                   $tabBoxHeight={$tabBoxHeight}
@@ -205,7 +205,7 @@ const TabBox = styled.button<{
   $tabBoxHeight: number;
   $childrenLength: number;
   $showTabBox: boolean;
-  $tabColor: string;
+  $tabBoxColor: string;
   $focusColor: string;
 }>`
   width: ${({ width, $childrenLength }) => `${width / $childrenLength}px`};
@@ -213,7 +213,7 @@ const TabBox = styled.button<{
   padding: 0.2rem 1rem;
   border: 0;
   cursor: pointer;
-  background-color: ${({ $tabColor }) => $tabColor};
+  background-color: ${({ $tabBoxColor }) => $tabBoxColor};
 
   ${({ $showTabBox, $tabBoxHeight }) =>
     !$showTabBox &&
@@ -258,10 +258,7 @@ const SwiperButtonWrapper = styled.div<{
   position: absolute;
   top: ${({ $tabBoxHeight, $showTabBox }) =>
     $showTabBox ? `calc(50% + ${$tabBoxHeight}px / 2)` : `50%`};
-  transform: ${({ $tabBoxHeight, $showTabBox }) =>
-    $showTabBox
-      ? `translateY(calc(-50% - ${$tabBoxHeight}px))`
-      : `translateY(-50%)`};
+  transform: translateY(-50%);
 
   ${({ position }) =>
     position === 'left'
@@ -276,5 +273,3 @@ const SwiperButtonWrapper = styled.div<{
     display: none;
   }
 `;
-
-export default Swiper;
