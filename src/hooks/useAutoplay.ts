@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface Props {
   autoplay: boolean;
@@ -15,38 +15,26 @@ const useAutoplay = ({
   pos,
   setPos,
 }: Props) => {
-  const [isPlaying, setIsPlaying] = useState<boolean>(autoplay);
   const intervalId = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (childrenListLength < 2) setIsPlaying(false);
-
-    if (isPlaying) {
+    if (autoplay && childrenListLength > 1) {
       intervalId.current = setInterval(
         () => {
           pos <= childrenListLength - 2
             ? setPos((prev) => prev + 1)
             : setPos(0);
         },
-        $autoplayTime < 1000 ? 1000 : $autoplayTime,
+        $autoplayTime < 1000 ? 1000 : $autoplayTime
       );
     }
 
-    if (!isPlaying && intervalId.current) clearInterval(intervalId.current);
+    if (!autoplay && intervalId.current) clearInterval(intervalId.current);
 
     return () => {
       if (intervalId.current) clearInterval(intervalId.current);
     };
-  }, [childrenListLength, pos, setPos, $autoplayTime, isPlaying]);
-
-  const toggleAutoplay = () => {
-    setIsPlaying((prev) => !prev);
-  };
-
-  return {
-    isPlaying,
-    toggleAutoplay,
-  };
+  }, [childrenListLength, pos, setPos, $autoplayTime, autoplay]);
 };
 
 export default useAutoplay;

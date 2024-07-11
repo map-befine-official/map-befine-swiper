@@ -1,2 +1,2 @@
-export { default as Swiper } from './lib/Swiper';
-export { default as Tab } from './lib/Tab';
+export { default as Swiper } from './Swiper';
+export { default as Tab } from './Tab';
