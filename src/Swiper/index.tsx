@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import { Props, TabProps } from '../../types/inex';
-import {
-  calculateTabCountUsingElements,
-  calculateWidthUsingElementsCount,
-  getTabsColor,
-} from '../../utils';
 import SwiperLeftBtnSVG from '../assets/swiper_left_button.svg?react';
 import SwiperRightBtnSVG from '../assets/swiper_right_button.svg?react';
 import useAutoplay from '../hooks/useAutoplay';
 import useMediaQuery from '../hooks/useMediaQuery';
 import useSwipeable from '../hooks/useSwipeable';
+import { Props, TabProps } from '../types/inex';
+import {
+  calculateTabCountUsingElements,
+  calculateWidthUsingElementsCount,
+  getTabsColor,
+} from '../utils';
 
 function Swiper({
   width = 400,

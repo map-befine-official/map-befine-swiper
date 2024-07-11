@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
-import Tabs from '../lib/Swiper';
-import Tab from '../lib/Tab';
+import Tabs from '../Swiper';
+import Tab from '../Tab';
 
 const meta = {
   title: 'Components/Tabs',
