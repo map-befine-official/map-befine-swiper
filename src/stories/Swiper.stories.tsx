@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
-import Tabs from '../Swiper';
+import Swiper from '../Swiper';
 import Tab from '../Tab';
 
 const meta = {
-  title: 'Components/Tabs',
-  component: Tabs,
+  title: 'Components/Swiper',
+  component: Swiper,
   tags: ['autodocs'],
   argTypes: {
     width: {
@@ -20,7 +20,7 @@ const meta = {
       description:
         'Tab Index Box 세로 크기를 설정합니다. 기본 값은 Height의 10분의 1입니다. 가로 크기는 Tab Layout과 같습니다.',
     },
-    $tabColor: {
+    $tabBoxColor: {
       control: { type: 'color', preset: '#E4E4E4' },
       description:
         'Tab Index Box 의 색상을 지정합니다. 기본값은 #E4E4E4 입니다.',
@@ -59,10 +59,10 @@ const meta = {
       description: 'autoplay 딜레이 시간을 지정합니다. ms 단위입니다.',
     },
   },
-} as Meta<typeof Tabs>;
+} as Meta<typeof Swiper>;
 
 export default meta;
-type Story = StoryObj<typeof Tabs>;
+type Story = StoryObj<typeof Swiper>;
 
 export const Default: Story = {
   args: {
@@ -71,77 +71,45 @@ export const Default: Story = {
     $tabBoxHeight: 40,
   },
   render: (args) => (
-    <Tabs {...args}>
-      <Tab label="main">Main Page</Tab>
-      <Tab label="my">My Page</Tab>
-      <Tab label="shop">
+    <Swiper {...args}>
+      <Tab label="main" style={{ backgroundColor: 'yellow' }}>
+        Main Page
+      </Tab>
+      <Tab label="my" style={{ backgroundColor: 'lightgreen' }}>
+        My Page
+      </Tab>
+      <Tab label="shop" style={{ backgroundColor: 'skyblue' }}>
         <section>
           <h2>products</h2>
           <span>products detail</span>
         </section>
       </Tab>
-    </Tabs>
+    </Swiper>
   ),
 };
 
-export const SimpleTab: Story = {
+export const TabLayout: Story = {
   args: {
     width: 1000,
     height: 400,
     $tabBoxHeight: 40,
+    $showTabBox: true,
   },
   render: (args) => (
-    <Tabs {...args}>
-      <Tab label="main">Main Page</Tab>
-      <Tab label="my">My Page</Tab>
-      <Tab label="shop">
+    <Swiper {...args}>
+      <Tab label="main" style={{ backgroundColor: 'yellow' }}>
+        Main Page
+      </Tab>
+      <Tab label="my" style={{ backgroundColor: 'lightgreen' }}>
+        My Page
+      </Tab>
+      <Tab label="shop" style={{ backgroundColor: 'skyblue' }}>
         <section>
           <h2>products</h2>
           <span>products detail</span>
         </section>
       </Tab>
-    </Tabs>
-  ),
-};
-
-export const BottomTab: Story = {
-  args: {
-    width: 1000,
-    height: 400,
-    $tabBoxHeight: 40,
-    $tabBoxPosition: 'bottom',
-  },
-  render: (args) => (
-    <Tabs {...args}>
-      <Tab label="main">Main Page</Tab>
-      <Tab label="my">My Page</Tab>
-      <Tab label="shop">
-        <section>
-          <h2>products</h2>
-          <span>products detail</span>
-        </section>
-      </Tab>
-    </Tabs>
-  ),
-};
-
-export const Swiper: Story = {
-  args: {
-    width: 1000,
-    height: 400,
-    $tabBoxHeight: 40,
-  },
-  render: (args) => (
-    <Tabs {...args}>
-      <Tab label="main">Main Page</Tab>
-      <Tab label="my">My Page</Tab>
-      <Tab label="shop">
-        <section>
-          <h2>products</h2>
-          <span>products detail</span>
-        </section>
-      </Tab>
-    </Tabs>
+    </Swiper>
   ),
 };
 
@@ -154,20 +122,24 @@ export const Autoplay: Story = {
     $autoplayTime: 3000,
   },
   render: (args) => (
-    <Tabs {...args}>
-      <Tab label="main">Main Page</Tab>
-      <Tab label="my">My Page</Tab>
-      <Tab label="shop">
+    <Swiper {...args}>
+      <Tab label="main" style={{ backgroundColor: 'yellow' }}>
+        Main Page
+      </Tab>
+      <Tab label="my" style={{ backgroundColor: 'lightgreen' }}>
+        My Page
+      </Tab>
+      <Tab label="shop" style={{ backgroundColor: 'skyblue' }}>
         <section>
           <h2>products</h2>
           <span>products detail</span>
         </section>
       </Tab>
-    </Tabs>
+    </Swiper>
   ),
 };
 
-export const ThreeElementsInOnTab: Story = {
+export const ThreeSlideInOneTab: Story = {
   args: {
     width: 1000,
     height: 400,
@@ -175,33 +147,60 @@ export const ThreeElementsInOnTab: Story = {
     $slidePerTab: 3,
   },
   render: (args) => (
-    <Tabs {...args}>
-      <Tab label="image1">image 1</Tab>
-      <Tab label="image2">image 2</Tab>
-      <Tab label="image3">image 3</Tab>
-      <Tab label="image4">image 4</Tab>
-      <Tab label="image5">image 5</Tab>
-    </Tabs>
+    <Swiper {...args}>
+      <Tab label="image1" style={{ backgroundColor: 'yellow' }}>
+        image 1
+      </Tab>
+      <Tab label="image2" style={{ backgroundColor: 'lightgreen' }}>
+        image 2
+      </Tab>
+      <Tab label="image3" style={{ backgroundColor: 'yellow' }}>
+        image 3
+      </Tab>
+      <Tab label="image4" style={{ backgroundColor: 'lightgreen' }}>
+        image 4
+      </Tab>
+      <Tab label="image5" style={{ backgroundColor: 'yellow' }}>
+        image 5
+      </Tab>
+      <Tab label="image5" style={{ backgroundColor: 'lightgreen' }}>
+        image 6
+      </Tab>
+    </Swiper>
   ),
 };
 
-export const MediaQueries: Story = {
+export const DynamicSlideToMediaQuery: Story = {
   args: {
     width: 1000,
     height: 400,
     $tabBoxHeight: 40,
     $slidePerTab: 4,
-    $breakPoints: { 600: 2, 400: 1 },
+    $breakPoints: { 800: 3, 600: 2, 400: 1 },
   },
   render: (args) => (
-    <Tabs {...args}>
-      <Tab label="image1">image 1</Tab>
-      <Tab label="image2">image 2</Tab>
-      <Tab label="image3">image 3</Tab>
-      <Tab label="image4">image 4</Tab>
-      <Tab label="image5">image 5</Tab>
-      <Tab label="image6">image 6</Tab>
-      <Tab label="image7">image 7</Tab>
-    </Tabs>
+    <Swiper {...args}>
+      <Tab label="image1" style={{ backgroundColor: 'yellow' }}>
+        image 1
+      </Tab>
+      <Tab label="image2" style={{ backgroundColor: 'lightgreen' }}>
+        image 2
+      </Tab>
+      <Tab label="image3" style={{ backgroundColor: 'yellow' }}>
+        image 3
+      </Tab>
+      <Tab label="image4" style={{ backgroundColor: 'lightgreen' }}>
+        image 4
+      </Tab>
+      <Tab label="image5" style={{ backgroundColor: 'yellow' }}>
+        image 5
+      </Tab>
+      <Tab label="image5" style={{ backgroundColor: 'lightgreen' }}>
+        image 6
+      </Tab>
+      <Tab label="image5" style={{ backgroundColor: 'yellow' }}>
+        image 7
+      </Tab>
+    </Swiper>
   ),
 };
