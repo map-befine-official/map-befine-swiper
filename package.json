@@ -1,7 +1,7 @@
 {
   "name": "map-befine-swiper",
   "private": false,
-  "version": "0.9.0",
+  "version": "0.9.1",
   "license": "MIT",
   "description": "https://mapbefine.com에서 사용하는 Swiper 라이브러리 입니다.",
   "type": "module",
