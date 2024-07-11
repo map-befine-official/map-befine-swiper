@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 
-interface Props {
+interface Props extends HTMLAttributes<HTMLDivElement> {
   label: string;
   children?: React.ReactNode;
 }
 
-function Tab({ children }: Props) {
-  return <div>{children}</div>;
+function Tab({ children, ...attribute }: Props) {
+  return <div {...attribute}>{children}</div>;
 }
 
 export default Tab;
