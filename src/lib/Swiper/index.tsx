@@ -20,11 +20,11 @@ function Swiper({
   $tabBoxHeight = height / 10,
   $tabBoxPosition = 'top',
   $slidePerTab = 1,
+  $breakPoints = {},
   $tabColor = '#e4e4e4',
   $focusColor = '#316fc4',
   autoplay = false,
   $autoplayTime = 5000,
-  $elementsMediaQueries = [],
   as = 'div',
   children,
 }: Props) {
@@ -34,7 +34,11 @@ function Swiper({
   const isShowTabBox = $showTabBox && childrenList.length > $slidePerTab;
 
   const [pos, setPos] = useState<number>(0);
-  const { elementsCount } = useMediaQuery($elementsMediaQueries, $slidePerTab);
+  const { slidePerTab } = useMediaQuery({
+    ignoreWidth: width,
+    breakPoints: $breakPoints,
+    $slidePerTab,
+  });
   const {
     increasePos,
     decreasePos,
@@ -44,7 +48,7 @@ function Swiper({
   } = useSwipeable({
     childrenListLength: calculateTabCountUsingElements(
       childrenList,
-      elementsCount
+      slidePerTab
     ).length,
     pos,
     setPos,
@@ -54,7 +58,7 @@ function Swiper({
     $autoplayTime,
     childrenListLength: calculateTabCountUsingElements(
       childrenList,
-      elementsCount
+      slidePerTab
     ).length,
     pos,
     setPos,
@@ -64,7 +68,7 @@ function Swiper({
     <Wrapper as={as} width={width} $tabBoxPosition={$tabBoxPosition}>
       {isShowTabBox && (
         <TabBoxWrapper $showTabBox={$showTabBox} $tabBoxHeight={$tabBoxHeight}>
-          {calculateTabCountUsingElements(childrenList, elementsCount).map(
+          {calculateTabCountUsingElements(childrenList, slidePerTab).map(
             (children, idx) =>
               children && (
                 <TabBox
@@ -95,7 +99,7 @@ function Swiper({
         height={height}
         $childrenLength={childrenList.length}
         pos={pos}
-        $slidePerView={elementsCount}
+        $slidePerView={slidePerTab}
       >
         {children}
       </TabSectionWrapper>

@@ -13,9 +13,9 @@ export interface Props {
   $focusColor?: string;
   $tabBoxPosition?: TabBoxPositionType;
   $slidePerTab?: number;
+  $breakPoints?: Record<number, number>;
   $showTabBox?: boolean;
   autoplay?: boolean;
   $autoplayTime?: number;
-  $elementsMediaQueries?: number[];
   as?: string;
 }

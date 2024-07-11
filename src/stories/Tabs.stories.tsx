@@ -44,11 +44,10 @@ const meta = {
       control: 'number',
       description: '하나의 Tab Index Box에서 표시할 Tab의 갯수를 지정합니다.',
     },
-    $elementsMediaQueries: {
-      control: 'select',
-      options: [[1200], [1200, 600]],
+    $breakPoints: {
+      control: false,
       description:
-        '미디어 쿼리 max-width 값을 number 타입 배열로 설정합니다. 이 속성을 쓰려면 $elementsOneTab을 지정해야합니다. 값을 하나 설정할 때마다 $elementsOneTab에서 -1 됩니다.',
+        'Record<number, number> 타입으로 key에 media query maxWidth 값을, value에 해당 maxWidth에 표시할 slide 개수를 지정합니다.',
     },
     autoplay: {
       control: 'boolean',
@@ -192,7 +191,7 @@ export const MediaQueries: Story = {
     height: 400,
     $tabBoxHeight: 40,
     $slidePerTab: 4,
-    $elementsMediaQueries: [1200, 600],
+    $breakPoints: { 600: 2, 400: 1 },
   },
   render: (args) => (
     <Tabs {...args}>
