@@ -58,6 +58,10 @@ const meta = {
       control: 'number',
       description: 'autoplay 딜레이 시간을 지정합니다. ms 단위입니다.',
     },
+    tag: {
+      control: false,
+      description: 'Swiper 컴포넌트의 HTML 태그를 지정합니다.',
+    },
   },
 } as Meta<typeof Swiper>;
 
