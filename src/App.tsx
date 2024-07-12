@@ -5,14 +5,14 @@ function App() {
     <>
       <Swiper
         width={1000}
-        height={400}
+        height="auto"
         $slidePerTab={3}
         $breakPoints={{
           600: 2,
           400: 1,
         }}
       >
-        <Tab label="1" style={{ backgroundColor: 'red' }}>
+        <Tab label="1" style={{ height: 400, backgroundColor: 'red' }}>
           1
         </Tab>
         <Tab label="1" style={{ backgroundColor: 'blue' }}>

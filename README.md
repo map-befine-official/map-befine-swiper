@@ -51,7 +51,7 @@ const App = () => {
 | $breakPoints    | Record<number, number> | optional  | {}          | Record<number, number> 타입으로 key에 media query maxWidth 값을, value에 해당 maxWidth에 표시할 slide 개수를 지정합니다. |
 | autoplay        | boolean                | optional  | false       | 일정 시간이 되면 자동으로 Tab 이 전환될 지 설정합니다.                                                                   |
 | $autoplayTime   | number                 | optional  | 5000        | autoplay 딜레이 시간을 설정합니다. ms 단위이며 1000 미만의 값은 1000으로 자동 지정됩니다.                                |
-| as              | string                 | optional  | 'div'       | Swiper의 DOM Tag를 설정합니다.                                                                                           |
+| tag             | string                 | optional  | 'div'       | Swiper의 DOM Tag를 설정합니다.                                                                                           |
 | children        | ReactNode              | essential | null        | Swiper 콘텐츠를 설정합니다.                                                                                              |
 
 ## Tab
@@ -84,7 +84,7 @@ const App = () => {
 
 ## 스토리북 배포 링크
 
-[map-befine-swiper-storybook](https://65127eae0e98643d69097dab-ztbwlmmroe.chromatic.com/?path=/docs/components-swiper--docs)
+[map-befine-swiper-storybook](https://65127eae0e98643d69097dab-rwuomozbje.chromatic.com/?path=/docs/components-swiper--docs)
 
 ## 개발 환경
 

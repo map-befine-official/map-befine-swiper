@@ -16,7 +16,6 @@ const checkMediaCondition = (key: number, idx: number, arr: number[]) => {
 const useMediaQuery = ({ ignoreWidth, breakPoints, $slidePerTab }: Props) => {
   const [slidePerTab, setSlidePerTab] = useState<number>($slidePerTab);
 
-  const requestRef = useRef<number | null>();
   const breakPointKeys = useRef<number[]>(
     Object.keys(breakPoints)
       .map(Number)
@@ -35,8 +34,6 @@ const useMediaQuery = ({ ignoreWidth, breakPoints, $slidePerTab }: Props) => {
     } else {
       setSlidePerTab($slidePerTab);
     }
-
-    console.log(idx, breakPointValues.current[idx]);
   };
 
   useEffect(() => {
@@ -44,10 +41,6 @@ const useMediaQuery = ({ ignoreWidth, breakPoints, $slidePerTab }: Props) => {
 
     return () => {
       window.removeEventListener('resize', resizeSwiper);
-
-      if (requestRef.current) {
-        cancelAnimationFrame(requestRef.current);
-      }
     };
   }, []);
 
