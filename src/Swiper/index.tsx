@@ -1,4 +1,9 @@
-import React, { ElementType, useState } from 'react';
+import React, {
+  ComponentPropsWithRef,
+  ElementType,
+  forwardRef,
+  useState,
+} from 'react';
 import styled, { css } from 'styled-components';
 
 import SwiperLeftBtnSVG from '../assets/swiper_left_button.svg?react';
@@ -7,8 +12,8 @@ import useAutoplay from '../hooks/useAutoplay';
 import useMediaQuery from '../hooks/useMediaQuery';
 import useSwipeable from '../hooks/useSwipeable';
 import {
-  Props,
   SwiperButtonWrapperProps,
+  SwiperProps,
   TabBoxProps,
   TabBoxWrapperProps,
   TabProps,
@@ -21,127 +26,139 @@ import {
   getTabsColor,
 } from '../utils';
 
-// forwardRef
+const Swiper = forwardRef(
+  <T extends ElementType = 'div'>(
+    {
+      width = 400,
+      height = 400,
+      $showTabBox = false,
+      $tabBoxHeight = 40,
+      $tabBoxPosition = 'top',
+      $slidePerTab = 1,
+      $breakPoints = {},
+      $tabBoxColor = '#e4e4e4',
+      $focusColor = '#316fc4',
+      autoplay = false,
+      $autoplayTime = 5000,
+      as,
+      children,
+      ...attributes
+    }: SwiperProps<T>,
+    ref: ComponentPropsWithRef<T>['ref']
+  ) => {
+    const tag = as || 'div';
+    const childrenList = React.Children.toArray(
+      children
+    ) as React.ReactElement<TabProps>[];
+    const isShowTabBox = $showTabBox && childrenList.length > $slidePerTab;
 
-export default function Swiper<T extends ElementType = 'div'>({
-  width = 400,
-  height = 400,
-  $showTabBox = false,
-  $tabBoxHeight = 40,
-  $tabBoxPosition = 'top',
-  $slidePerTab = 1,
-  $breakPoints = {},
-  $tabBoxColor = '#e4e4e4',
-  $focusColor = '#316fc4',
-  autoplay = false,
-  $autoplayTime = 5000,
-  as,
-  children,
-  ...attributes
-}: Props<T>) {
-  const tag = as || 'div';
-  const childrenList = React.Children.toArray(
-    children
-  ) as React.ReactElement<TabProps>[];
-  const isShowTabBox = $showTabBox && childrenList.length > $slidePerTab;
+    const [pos, setPos] = useState<number>(0);
 
-  const [pos, setPos] = useState<number>(0);
-  const { slidePerTab } = useMediaQuery({
-    ignoreWidth: width,
-    breakPoints: $breakPoints,
-    $slidePerTab,
-  });
-  const {
-    increasePos,
-    decreasePos,
-    moveToSettedPos,
-    handleTouchMove,
-    handleTouchEnd,
-  } = useSwipeable({
-    childrenListLength: calculateTabCountUsingElements(
-      childrenList,
-      slidePerTab
-    ).length,
-    pos,
-    setPos,
-  });
-  useAutoplay({
-    autoplay,
-    $autoplayTime,
-    childrenListLength: calculateTabCountUsingElements(
-      childrenList,
-      slidePerTab
-    ).length,
-    pos,
-    setPos,
-  });
+    const { slidePerTab } = useMediaQuery({
+      ignoreWidth: width,
+      breakPoints: $breakPoints,
+      $slidePerTab,
+    });
 
-  return (
-    <Wrapper
-      as={tag}
-      width={width}
-      $tabBoxPosition={$tabBoxPosition}
-      {...attributes}
-    >
-      {isShowTabBox && (
-        <TabBoxWrapper $showTabBox={$showTabBox} $tabBoxHeight={$tabBoxHeight}>
-          {calculateTabCountUsingElements(childrenList, slidePerTab).map(
-            (children, idx) =>
-              children && (
-                <TabBox
-                  key={`${children.props.label}, ${idx + 1}`}
-                  idx={idx}
-                  pos={pos}
-                  $tabBoxColor={getTabsColor(idx, $tabBoxColor)}
-                  $focusColor={$focusColor}
-                  width={width}
-                  $tabBoxHeight={$tabBoxHeight}
-                  $childrenLength={Math.ceil(
-                    childrenList.length / $slidePerTab
-                  )}
-                  $showTabBox={$showTabBox}
-                  onClick={() => moveToSettedPos(idx)}
-                >
-                  {$showTabBox && (children.props.label || idx + 1)}
-                </TabBox>
-              )
-          )}
-        </TabBoxWrapper>
-      )}
+    const {
+      increasePos,
+      decreasePos,
+      moveToSettedPos,
+      handleTouchMove,
+      handleTouchEnd,
+    } = useSwipeable({
+      childrenListLength: calculateTabCountUsingElements(
+        childrenList,
+        slidePerTab
+      ).length,
+      pos,
+      setPos,
+    });
 
-      <TabSectionWrapper
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+    useAutoplay({
+      autoplay,
+      $autoplayTime,
+      childrenListLength: calculateTabCountUsingElements(
+        childrenList,
+        slidePerTab
+      ).length,
+      pos,
+      setPos,
+    });
+
+    return (
+      <Wrapper
+        as={tag}
+        ref={ref}
         width={width}
-        height={height}
-        $childrenLength={childrenList.length}
-        pos={pos}
-        $slidePerView={slidePerTab}
+        $tabBoxPosition={$tabBoxPosition}
+        {...attributes}
       >
-        {children}
-      </TabSectionWrapper>
+        {isShowTabBox && (
+          <TabBoxWrapper
+            $showTabBox={$showTabBox}
+            $tabBoxHeight={$tabBoxHeight}
+          >
+            {calculateTabCountUsingElements(childrenList, slidePerTab).map(
+              (children, idx) =>
+                children && (
+                  <TabBox
+                    key={`${children.props.label}, ${idx + 1}`}
+                    idx={idx}
+                    pos={pos}
+                    $tabBoxColor={getTabsColor(idx, $tabBoxColor)}
+                    $focusColor={$focusColor}
+                    width={width}
+                    $tabBoxHeight={$tabBoxHeight}
+                    $childrenLength={Math.ceil(
+                      childrenList.length / $slidePerTab
+                    )}
+                    $showTabBox={$showTabBox}
+                    onClick={() => moveToSettedPos(idx)}
+                  >
+                    {$showTabBox && (children.props.label || idx + 1)}
+                  </TabBox>
+                )
+            )}
+          </TabBoxWrapper>
+        )}
 
-      <>
-        <SwiperButtonWrapper
-          $tabBoxHeight={$tabBoxHeight}
-          $showTabBox={$showTabBox}
-          position="left"
-          onClick={decreasePos}
+        <TabSectionWrapper
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          width={width}
+          height={height}
+          $childrenLength={childrenList.length}
+          pos={pos}
+          $slidePerView={slidePerTab}
         >
-          <SwiperLeftBtnSVG />
-        </SwiperButtonWrapper>
-        <SwiperButtonWrapper
-          $tabBoxHeight={$tabBoxHeight}
-          $showTabBox={$showTabBox}
-          position="right"
-          onClick={increasePos}
-        >
-          <SwiperRightBtnSVG />
-        </SwiperButtonWrapper>
-      </>
-    </Wrapper>
-  );
-}
+          {children}
+        </TabSectionWrapper>
+
+        <>
+          <SwiperButtonWrapper
+            $tabBoxHeight={$tabBoxHeight}
+            $showTabBox={$showTabBox}
+            position="left"
+            onClick={decreasePos}
+          >
+            <SwiperLeftBtnSVG />
+          </SwiperButtonWrapper>
+          <SwiperButtonWrapper
+            $tabBoxHeight={$tabBoxHeight}
+            $showTabBox={$showTabBox}
+            position="right"
+            onClick={increasePos}
+          >
+            <SwiperRightBtnSVG />
+          </SwiperButtonWrapper>
+        </>
+      </Wrapper>
+    );
+  }
+);
+
+export default Swiper;
 
 const Wrapper = styled.div<WrapperProps>`
   width: ${({ width }) => `${width}px`};
@@ -193,12 +210,9 @@ const TabSectionWrapper = styled.div<TabSectionWrapperProps>`
 const TabBoxWrapper = styled.div<TabBoxWrapperProps>`
   display: flex;
   align-items: center;
-
-  // 기본값은 height / 10 입니다. 하지만 사용자가 직접 지정할 수도 있게 해두었습니다.
   height: ${({ $tabBoxHeight }) => `${$tabBoxHeight}px`};
   overflow: auto;
 
-  // simpleTab 모드에서는 TabButton이 작아지므로 가운데 정렬하도록 합니다.
   ${({ $showTabBox }) =>
     !$showTabBox &&
     css`
