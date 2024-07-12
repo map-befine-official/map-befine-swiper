@@ -40,13 +40,13 @@ const Swiper = forwardRef(
       $focusColor = '#316fc4',
       autoplay = false,
       $autoplayTime = 5000,
-      as,
+      tag,
       children,
       ...attributes
     }: SwiperProps<T>,
     ref: ComponentPropsWithRef<T>['ref']
   ) => {
-    const tag = as || 'div';
+    const elementTag = tag || 'div';
     const childrenList = React.Children.toArray(
       children
     ) as React.ReactElement<TabProps>[];
@@ -88,7 +88,7 @@ const Swiper = forwardRef(
 
     return (
       <Wrapper
-        as={tag}
+        as={elementTag}
         ref={ref}
         width={width}
         $tabBoxPosition={$tabBoxPosition}

@@ -20,7 +20,7 @@ export type SwiperProps<T extends ElementType = 'div'> =
     $showTabBox?: boolean;
     autoplay?: boolean;
     $autoplayTime?: number;
-    as?: T;
+    tag?: T;
   };
 
 export interface TabSectionWrapperProps {
