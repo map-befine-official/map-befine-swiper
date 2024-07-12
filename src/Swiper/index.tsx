@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ElementType, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import SwiperLeftBtnSVG from '../assets/swiper_left_button.svg?react';
@@ -6,14 +6,24 @@ import SwiperRightBtnSVG from '../assets/swiper_right_button.svg?react';
 import useAutoplay from '../hooks/useAutoplay';
 import useMediaQuery from '../hooks/useMediaQuery';
 import useSwipeable from '../hooks/useSwipeable';
-import { Props, TabProps } from '../types';
+import {
+  Props,
+  SwiperButtonWrapperProps,
+  TabBoxProps,
+  TabBoxWrapperProps,
+  TabProps,
+  TabSectionWrapperProps,
+  WrapperProps,
+} from '../types';
 import {
   calculateTabCountUsingElements,
   calculateWidthUsingElementsCount,
   getTabsColor,
 } from '../utils';
 
-export default function Swiper({
+// forwardRef
+
+export default function Swiper<T extends ElementType = 'div'>({
   width = 400,
   height = 400,
   $showTabBox = false,
@@ -25,9 +35,11 @@ export default function Swiper({
   $focusColor = '#316fc4',
   autoplay = false,
   $autoplayTime = 5000,
-  as = 'div',
+  as,
   children,
-}: Props) {
+  ...attributes
+}: Props<T>) {
+  const tag = as || 'div';
   const childrenList = React.Children.toArray(
     children
   ) as React.ReactElement<TabProps>[];
@@ -65,7 +77,12 @@ export default function Swiper({
   });
 
   return (
-    <Wrapper as={as} width={width} $tabBoxPosition={$tabBoxPosition}>
+    <Wrapper
+      as={tag}
+      width={width}
+      $tabBoxPosition={$tabBoxPosition}
+      {...attributes}
+    >
       {isShowTabBox && (
         <TabBoxWrapper $showTabBox={$showTabBox} $tabBoxHeight={$tabBoxHeight}>
           {calculateTabCountUsingElements(childrenList, slidePerTab).map(
@@ -126,7 +143,7 @@ export default function Swiper({
   );
 }
 
-const Wrapper = styled.div<Partial<Props>>`
+const Wrapper = styled.div<WrapperProps>`
   width: ${({ width }) => `${width}px`};
   overflow: hidden;
   margin: 0 auto;
@@ -142,18 +159,12 @@ const Wrapper = styled.div<Partial<Props>>`
   `}
 `;
 
-const TabSectionWrapper = styled.div<{
-  width: number;
-  height: number;
-  $childrenLength: number;
-  pos: number;
-  $slidePerView: number;
-}>`
+const TabSectionWrapper = styled.div<TabSectionWrapperProps>`
   display: flex;
 
   // 사용자가 입력한 <Tabs />의 width 값을 <Tab /> 컴포넌트 개수만큼 곱하여 Tab Section의 width를 설정합니다. 따라서 overflow 됩니다.
   width: ${({ width, $childrenLength }) => `${width * $childrenLength}px`};
-  height: ${({ height }) => `${height}px`};
+  height: ${({ height }) => (height === 'auto' ? 'auto' : `${height}px`)};
 
   // 사용자가 입력한 width 값 보다 <Tab /> 컴포넌트 개수만큼 overflow 되었으므로 width * index 만큼 transform 하여 요소의 위치로 이동합니다. (전환 효과)
   transform: ${({ width, pos }) => `translateX(${-width * pos}px)`};
@@ -179,10 +190,7 @@ const TabSectionWrapper = styled.div<{
   }
 `;
 
-const TabBoxWrapper = styled.div<{
-  $showTabBox: boolean;
-  $tabBoxHeight: number;
-}>`
+const TabBoxWrapper = styled.div<TabBoxWrapperProps>`
   display: flex;
   align-items: center;
 
@@ -198,16 +206,7 @@ const TabBoxWrapper = styled.div<{
     `}
 `;
 
-const TabBox = styled.button<{
-  width: number;
-  idx: number;
-  pos: number;
-  $tabBoxHeight: number;
-  $childrenLength: number;
-  $showTabBox: boolean;
-  $tabBoxColor: string;
-  $focusColor: string;
-}>`
+const TabBox = styled.button<TabBoxProps>`
   width: ${({ width, $childrenLength }) => `${width / $childrenLength}px`};
   height: inherit;
   padding: 0.2rem 1rem;
@@ -249,11 +248,7 @@ const TabBox = styled.button<{
     `}
 `;
 
-const SwiperButtonWrapper = styled.div<{
-  $tabBoxHeight: number;
-  $showTabBox: boolean;
-  position: 'left' | 'right';
-}>`
+const SwiperButtonWrapper = styled.div<SwiperButtonWrapperProps>`
   cursor: pointer;
   position: absolute;
   top: ${({ $tabBoxHeight, $showTabBox }) =>
