@@ -6,7 +6,7 @@ import SwiperRightBtnSVG from '../assets/swiper_right_button.svg?react';
 import useAutoplay from '../hooks/useAutoplay';
 import useMediaQuery from '../hooks/useMediaQuery';
 import useSwipeable from '../hooks/useSwipeable';
-import { Props, TabProps } from '../types/inex';
+import { Props, TabProps } from '../types';
 import {
   calculateTabCountUsingElements,
   calculateWidthUsingElementsCount,
@@ -17,7 +17,7 @@ export default function Swiper({
   width = 400,
   height = 400,
   $showTabBox = false,
-  $tabBoxHeight = height / 10,
+  $tabBoxHeight = 40,
   $tabBoxPosition = 'top',
   $slidePerTab = 1,
   $breakPoints = {},

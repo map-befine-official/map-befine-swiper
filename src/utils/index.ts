@@ -1,4 +1,4 @@
-import { TabProps } from '../types/inex';
+import { TabProps } from '../types';
 
 export const getTabsColor = (
   indexOfTab: number,
