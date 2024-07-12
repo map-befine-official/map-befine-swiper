@@ -6,7 +6,7 @@ export interface TabProps {
   label: string;
 }
 
-export type Props<T extends ElementType = 'div'> =
+export type SwiperProps<T extends ElementType = 'div'> =
   ComponentPropsWithoutRef<T> & {
     children: React.ReactNode;
     width?: number;
